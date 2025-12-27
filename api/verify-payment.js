@@ -17,15 +17,18 @@ export default async function handler(req, res) {
   }
 
   const { data, error } = await supabase
-    .from("orders")
+    .from("payments")
     .select("*")
     .eq("token", token)
-    .eq("status", "paid")
+    .eq("paid", true)
     .single();
 
   if (error || !data) {
-    return res.status(401).json({ valid: false });
+    return res.status(404).json({ valid: false });
   }
 
-  return res.status(200).json({ valid: true });
+  return res.status(200).json({
+    valid: true,
+    downloadUrl: data.download_url
+  });
 }
